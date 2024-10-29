@@ -1,0 +1,30 @@
+### values
+POST http://localhost:8081/api/crypto/values
+Content-Type: application/json
+
+{
+    "name": "CRYPTY",
+    "price": 11.00
+}
+
+### buy order
+POST http://localhost:8082/api/crypto/orders
+Content-Type: application/json
+
+{
+    "crypto": "CRYPTY",
+    "quantity": 1.1
+}
+
+### sell order
+POST http://localhost:8082/api/crypto/orders
+Content-Type: application/json
+
+{
+    "crypto": "CRYPTY",
+    "quantity": -1.0
+}
+
+### executed-orders
+GET http://localhost:8084/api/orders/executed
+Content-Type: application/json
