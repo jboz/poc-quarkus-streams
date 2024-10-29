@@ -4,7 +4,7 @@ Content-Type: application/json
 
 {
     "name": "CRYPTY",
-    "price": 11.00
+    "price": 10.00
 }
 
 ### buy order
@@ -13,7 +13,7 @@ Content-Type: application/json
 
 {
     "crypto": "CRYPTY",
-    "quantity": 1.1
+    "quantity": 1.2
 }
 
 ### sell order
@@ -26,5 +26,5 @@ Content-Type: application/json
 }
 
 ### executed-orders
-GET http://localhost:8084/api/orders/executed
+GET http://localhost:8083/api/orders/executed?crypto=CRYPTY
 Content-Type: application/json

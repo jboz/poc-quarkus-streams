@@ -7,8 +7,10 @@ import org.apache.kafka.streams.StreamsBuilder;
 import org.apache.kafka.streams.Topology;
 import org.apache.kafka.streams.kstream.Consumed;
 import org.apache.kafka.streams.kstream.JoinWindows;
+import org.apache.kafka.streams.kstream.Materialized;
 import org.apache.kafka.streams.kstream.Produced;
 import org.apache.kafka.streams.kstream.StreamJoined;
+import org.apache.kafka.streams.state.Stores;
 import ch.ifocusit.orders.executed.boundary.crypto.Crypto;
 import ch.ifocusit.orders.executed.boundary.orders.Order;
 import ch.ifocusit.orders.executed.entities.ExecutedOrder;
@@ -22,6 +24,8 @@ public class ExecutedOrdersTopology {
         @Produces
         public Topology getPortfolioTopology() {
                 var builder = new StreamsBuilder();
+
+                var storeSupplier = Stores.persistentKeyValueStore("executed-orders-store");
 
                 var valueSerde = new ObjectMapperSerde<>(Crypto.class);
                 var orderSerde = new ObjectMapperSerde<>(Order.class);
@@ -48,11 +52,14 @@ public class ExecutedOrdersTopology {
                                                 .quantity(order.getQuantity())
                                                 .build(),
                                 // and in a window of 2 minutes
-                                JoinWindows.ofTimeDifferenceWithNoGrace(Duration.ofMinutes(2)),
+                                JoinWindows.ofTimeDifferenceWithNoGrace(Duration.ofSeconds(5)),
                                 StreamJoined.with(keySerde, valueSerde, orderSerde))
-                                // .groupByKey() // keep the latest order per crypto
-                                // .reduce((a, b) -> b)
-                                // .toStream()
+                                .groupByKey() // keep the latest order per crypto
+                                .reduce((a, b) -> b,
+                                                Materialized.<String, ExecutedOrder>as(storeSupplier)
+                                                                .withKeySerde(keySerde)
+                                                                .withValueSerde(executedOrderSerde))
+                                .toStream()
                                 .to("executed-orders", Produced.with(keySerde, executedOrderSerde));
 
                 return builder.build();

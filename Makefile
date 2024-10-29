@@ -9,6 +9,9 @@ help: ## Display available commands
 	$(info possible commands:)
 	@grep -F -h "##" $(MAKEFILE_LIST) | grep -F -v fgrep | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
+up: ## start the service
+	make start $(filter-out $@,$(MAKECMDGOALS))
+
 down: ## Down container(s)
 	docker compose down --remove-orphans $(filter-out $@,$(MAKECMDGOALS))
 
