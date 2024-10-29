@@ -45,24 +45,11 @@ return builder.build();
 ## Local run
 
 ```shell
-# start a unique kafka server
-docker compose -f docker.compose-local.yaml up
-# start apps in differents terminals
-./mvnw -f crypto-values quarkus:dev -Dkafka.bootstrap.servers=localhost:9092
-./mvnw -f crypto-orders quarkus:dev -Dkafka.bootstrap.servers=localhost:9092
-./mvnw -f executed-orders quarkus:dev -Dkafka.bootstrap.servers=localhost:9092
-./mvnw -f portfolio quarkus:dev -Dkafka.bootstrap.servers=localhost:9092
+make package
+make up
 ```
 
 And use 'api.http' to execute http calls.
-
-A tool can be used to examine streaming:
-
-```shell
-docker run --tty --rm -i --network ks debezium/tooling:1.1
-# and run a command whithin to listen topics
-kafkacat -b kafka:9092 -C -o beginning -q -t REPLACE_WITH_A_TOPIC_NAME
-```
 
 ## Aggregation / join topic by id
 
@@ -75,9 +62,9 @@ TODO:
 3. [x] create a second topic that emit an order event (buy or sell)
 4. [x] create a rest endpoint to manually emit the order
 5. [x] create a topology that aggregate the 2 previous topics, join by crypto id, and emit on a third topic the execute order event
-6. [ ] consume only the last crypto-values for joining the 2 topics
-7. [ ] consume the third topic
-8. [ ] test different windowing
+6. [x] consume only the last crypto-values for joining the 2 topics
+7. [x] consume the third topic
+8. [x] test different windowing
 9. [ ] validate topic 1 and 2 retention management
 10. [ ] check filesystem persistence
 

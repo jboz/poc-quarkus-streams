@@ -13,8 +13,6 @@ import lombok.Singular;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Portfolio {
-    String crypto;
-
     @Singular
     List<ExecutedOrder> orders;
 }

@@ -46,16 +46,17 @@ public class ExecutedOrdersTopology {
 
                 // join values and orders
                 values.join(orders,
-                                (value, order) -> ExecutedOrder.builder()
-                                                .crypto(value.getName())
-                                                .unitPrice(value.getPrice())
-                                                .quantity(order.getQuantity())
-                                                .build(),
+                                (value, order) -> new Pair(value, order),
                                 // and in a window of 2 minutes
-                                JoinWindows.ofTimeDifferenceWithNoGrace(Duration.ofSeconds(5)),
+                                JoinWindows.ofTimeDifferenceWithNoGrace(Duration.ofSeconds(10)),
                                 StreamJoined.with(keySerde, valueSerde, orderSerde))
                                 .groupByKey() // keep the latest order per crypto
-                                .reduce((a, b) -> b,
+                                .aggregate(ExecutedOrder::new, (k, pair, order) -> order.toBuilder()
+                                                .crypto(pair.left().getName())
+                                                .unitPrice(pair.left().getPrice())
+                                                .quantity(pair.right().getQuantity())
+                                                .timestamp(order.getTimestamp())
+                                                .build(),
                                                 Materialized.<String, ExecutedOrder>as(storeSupplier)
                                                                 .withKeySerde(keySerde)
                                                                 .withValueSerde(executedOrderSerde))

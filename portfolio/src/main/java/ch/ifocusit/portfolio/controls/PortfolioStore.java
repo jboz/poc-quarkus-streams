@@ -6,20 +6,16 @@ import org.apache.kafka.streams.errors.InvalidStateStoreException;
 import org.apache.kafka.streams.state.QueryableStoreTypes;
 import org.apache.kafka.streams.state.ReadOnlyKeyValueStore;
 import ch.ifocusit.portfolio.entities.Portfolio;
-import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Produces;
 import jakarta.inject.Inject;
 
-@ApplicationScoped
-public class PortfolioQueries {
+public class PortfolioStore {
 
     @Inject
     KafkaStreams streams;
 
-    public Portfolio gePortfolio(String crypto) {
-        return null;
-    }
-
-    private ReadOnlyKeyValueStore<String, Portfolio> getPortfolioStore() {
+    @Produces
+    public ReadOnlyKeyValueStore<String, Portfolio> store() {
         while (true) {
             try {
                 return streams.store(StoreQueryParameters.fromNameAndType(PortfolioTopologyProducer.PORTFOLIO_STORE,
