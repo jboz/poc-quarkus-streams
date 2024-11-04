@@ -1,11 +1,14 @@
 package ch.ifocusit.orders.entities;
 
 import java.time.Instant;
+import java.util.UUID;
 import lombok.NonNull;
 import lombok.Value;
 
 @Value
 public class Order {
+    UUID id = UUID.randomUUID();
+
     @NonNull
     String crypto;
     @NonNull

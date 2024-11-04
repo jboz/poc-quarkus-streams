@@ -15,6 +15,7 @@ import ch.ifocusit.orders.executed.boundary.crypto.Crypto;
 import ch.ifocusit.orders.executed.boundary.orders.Order;
 import ch.ifocusit.orders.executed.entities.ExecutedOrder;
 import io.quarkus.kafka.client.serialization.ObjectMapperSerde;
+import io.quarkus.logging.Log;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Produces;
 
@@ -51,17 +52,28 @@ public class ExecutedOrdersTopology {
                                 JoinWindows.ofTimeDifferenceWithNoGrace(Duration.ofSeconds(10)),
                                 StreamJoined.with(keySerde, valueSerde, orderSerde))
                                 .groupByKey() // keep the latest order per crypto
-                                .aggregate(ExecutedOrder::new, (k, pair, order) -> order.toBuilder()
-                                                .crypto(pair.left().getName())
-                                                .unitPrice(pair.left().getPrice())
-                                                .quantity(pair.right().getQuantity())
-                                                .timestamp(order.getTimestamp())
-                                                .build(),
+                                .aggregate(() -> null,
+                                                (k, pair, order) -> ExecutedOrder.toBuilder(order)
+                                                                .crypto(pair.left().getName())
+                                                                .unitPrice(pair.left().getPrice())
+                                                                .quantity(pair.right().getQuantity())
+                                                                .valueId(pair.left().getId())
+                                                                .orderId(pair.right().getId())
+                                                                .build(),
                                                 Materialized.<String, ExecutedOrder>as(storeSupplier)
                                                                 .withKeySerde(keySerde)
                                                                 .withValueSerde(executedOrderSerde))
                                 .toStream()
+                                .peek((k, v) -> Log.infof("Executed order: %s", v))
                                 .to("executed-orders", Produced.with(keySerde, executedOrderSerde));
+
+                // values.leftJoin(orders,
+                // (value, order) -> new Pair(value, order),
+                // JoinWindows.ofTimeDifferenceWithNoGrace(Duration.ofSeconds(10)),
+                // StreamJoined.with(keySerde, valueSerde, orderSerde))
+                // .print(Printed.toSysOut());
+
+                // builder.stream("order-buy").merge(builder.stream("order-sell")).print(Printed.toSysOut());
 
                 return builder.build();
         }

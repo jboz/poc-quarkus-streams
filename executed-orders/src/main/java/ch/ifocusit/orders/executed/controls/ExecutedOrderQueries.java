@@ -30,13 +30,7 @@ public class ExecutedOrderQueries {
     }
 
     private ReadOnlyKeyValueStore<String, ExecutedOrder> store() {
-        while (true) {
-            try {
-                return streams.store(fromNameAndType("executed-orders-store",
-                        QueryableStoreTypes.keyValueStore()));
-            } catch (Exception e) {
-                // ignore because store is not ready
-            }
-        }
+        return streams.store(fromNameAndType("executed-orders-store",
+                QueryableStoreTypes.keyValueStore()));
     }
 }
