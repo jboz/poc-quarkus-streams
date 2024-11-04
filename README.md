@@ -65,8 +65,11 @@ TODO:
 6. [x] consume only the last crypto-values for joining the 2 topics
 7. [x] consume the third topic
 8. [x] test different windowing
-9. [ ] validate topic 1 and 2 retention management
-10. [ ] check filesystem persistence
+9. [ ] write integration tests
+10. [ ] write unit tests
+11. [ ] use avro for crypto-values and crypto-orders topics
+12. [ ] validate topic 1 and 2 retention management
+13. [ ] check filesystem persistence
 
 ## Event sourcing
 
@@ -74,7 +77,7 @@ Transactions on a bank account.
 
 TODO:
 
-1. [ ] use the previous aggregate topic of execute order event
-2. [ ] get historic
-3. [ ] get snapshot
-4. [ ] emit a cancel a transaction event
+1. [ ] use the previous aggregate topic of executed order event and apply transactions an account
+2. [ ] read historic, multiple times
+3. [ ] create snapshot
+4. [ ] remove events from a key
