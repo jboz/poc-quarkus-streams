@@ -45,7 +45,7 @@ return builder.build();
 ## Local run
 
 ```shell
-make package
+make install
 make up
 ```
 

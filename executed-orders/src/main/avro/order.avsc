@@ -1,0 +1,29 @@
+{
+  "namespace": "ch.ifocusit.orders.entities",
+  "type": "record",
+  "name": "Order",
+  "fields": [
+    {
+      "name": "id",
+      "type": {
+        "type": "string",
+        "logicalType": "uuid"
+      }
+    },
+    {
+      "name": "crypto",
+      "type": "string"
+    },
+    {
+      "name": "quantity",
+      "type": "double"
+    },
+    {
+      "name": "timestamp",
+      "type": {
+        "type": "long",
+        "logicalType": "local-timestamp-millis"
+      }
+    }
+  ]
+}

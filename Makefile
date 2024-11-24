@@ -47,5 +47,11 @@ reload: ## stop/remove/pull/start container
 	make pull $(filter-out $@,$(MAKECMDGOALS))
 	make start $(filter-out $@,$(MAKECMDGOALS))
 
-package: ## build application
+install: ## build application
 	./mvnw clean package
+
+debug: ## run a module
+	./mvnw -f $(filter-out $@,$(MAKECMDGOALS)) quarkus:dev
+
+run: ## run a module
+	./mvnw -f $(filter-out $@,$(MAKECMDGOALS)) quarkus:dev -Dkafka.bootstrap.servers=PLAINTEXT://localhost:9092 -Dmp.messaging.connector.smallrye-kafka.apicurio.registry.url=http://localhost:9091/apis/registry/v2

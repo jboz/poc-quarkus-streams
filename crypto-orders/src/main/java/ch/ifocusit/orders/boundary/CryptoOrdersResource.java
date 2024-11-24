@@ -1,5 +1,7 @@
 package ch.ifocusit.orders.boundary;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import ch.ifocusit.orders.entities.Order;
 import io.smallrye.mutiny.Uni;
@@ -17,12 +19,16 @@ import jakarta.ws.rs.core.MediaType;
 public class CryptoOrdersResource {
 
     @Inject
-    @Channel("crypto-orders")
+    @Channel("orders")
     MutinyEmitter<Order> emitter;
 
     @POST
     public Uni<Order> create(Order order) {
-        return emitter.send(order)
-                .onItem().transform(v -> order);
+        Order payload = Order.newBuilder(order)
+                .setId(UUID.randomUUID())
+                .setTimestamp(LocalDateTime.now())
+                .build();
+        return emitter.send(payload)
+                .onItem().transform(v -> payload);
     }
 }

@@ -14,10 +14,9 @@ public class ExecutedOrder {
 
     @NonNull
     String crypto;
-    @NonNull
-    Double quantity;
-    @NonNull
-    Double unitPrice;
+
+    double quantity;
+    double unitPrice;
 
     @NonNull
     UUID valueId;

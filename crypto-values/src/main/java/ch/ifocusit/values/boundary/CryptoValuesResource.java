@@ -1,5 +1,7 @@
 package ch.ifocusit.values.boundary;
 
+import java.time.LocalDateTime;
+import java.util.UUID;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import ch.ifocusit.values.entities.Crypto;
 import io.smallrye.mutiny.Uni;
@@ -17,12 +19,16 @@ import jakarta.ws.rs.core.MediaType;
 public class CryptoValuesResource {
 
     @Inject
-    @Channel("crypto-values")
+    @Channel("values")
     MutinyEmitter<Crypto> emitter;
 
     @POST
     public Uni<Crypto> create(Crypto crypto) {
-        return emitter.send(crypto)
-                .onItem().transform(v -> crypto);
+        Crypto payload = Crypto.newBuilder(crypto)
+                .setId(UUID.randomUUID())
+                .setTimestamp(LocalDateTime.now())
+                .build();
+        return emitter.send(payload)
+                .onItem().transform(v -> payload);
     }
 }

@@ -1,0 +1,17 @@
+### list cluster
+GET http://localhost:9082/v3/clusters
+
+@CLUSTER_ID=uqAfXBwfQ9mVlEkoNAU9jQ
+
+### list topics
+GET http://localhost:9082/v3/clusters/{{CLUSTER_ID}}/topics
+
+### post message
+POST http://localhost:9082/v3/clusters/{{CLUSTER_ID}}/topics/crypto-values/records
+
+{
+    "id": "a0aeee6d-d9fd-4841-bb74-28264f5d55ac",
+    "timestamp": "2024-11-07T10:29:43.324161387",
+    "name": "CRYPTY",
+    "price": 10.00
+}
